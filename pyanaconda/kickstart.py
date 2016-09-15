@@ -267,10 +267,7 @@ class AutoPart(commands.autopart.F21_AutoPart):
         from blivet.autopart import do_autopart
         from pyanaconda.storage_utils import sanity_check
 
-        if not self.autopart:
-            return
-
-        if self.fstype:
+        if self.autopart and self.fstype:
             try:
                 storage.set_default_fstype(self.fstype)
                 storage.set_default_boot_fstype(self.fstype)
@@ -281,8 +278,10 @@ class AutoPart(commands.autopart.F21_AutoPart):
         # sets up default autopartitioning.  use clearpart separately
         # if you want it
         instClass.setDefaultPartitioning(storage)
-        storage.do_autopart = True
+        if not self.autopart:
+            return
 
+        storage.do_autopart = True
         if self.encrypted:
             storage.encrypted_autopart = True
             storage.encryption_passphrase = self.passphrase
